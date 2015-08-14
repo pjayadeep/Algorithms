@@ -2,37 +2,32 @@ import time
 from sets import Set
 fd = open('algo1-programming_prob-2sum.txt', 'rU')
 #fd = open('med1.txt', 'rU')
-arr = {}
+hashTable = {}
 bucketSize = 10**4
 tRange = 10000
 
 start_time = time.time()
 st = start_time
 for i in fd:
-	val = int(i)
+	val = long(i)
+	key = val/bucketSize if val >= 0 else -(-val/bucketSize) 
 	try:
-		arr[val/bucketSize].append(val)
+		hashTable[key].append(val)
 	except:
-		arr[val/bucketSize] = [val]
+		hashTable[key] = [val]
 
 S = Set()
 print("--- %s seconds ---" % (time.time() - start_time))
-print "reading done, size = ", len(arr)
-#print len(arr), len(arr.values())
+print "reading done, size = ", len(hashTable)
 
 start_time = time.time()
-for key1 in arr:
+for key1 in hashTable:
 	if key1 > 0: # sufficient to handle the -ve and 0 buckets.
 		continue
-	yrange1 = tRange/bucketSize - key1
-	yrange2 = -tRange/bucketSize - key1
-	#print key1, range(yrange2-1,yrange1)
-
-	for x in arr[key1]:
-		for p in range(yrange2-1,yrange1):
-		#for p in [-key1, -key1-1, -key1-2]: 
+	for x in hashTable[key1]:
+		for p in [-key1, -key1-1, -key1+1]: 
 			try:
-				for y in arr[p]:
+				for y in hashTable[p]:
 					if y == x: continue
 					t = x + y
 					if abs(t) <= tRange :
