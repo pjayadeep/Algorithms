@@ -3,6 +3,17 @@ from sets import Set
 import heap
 import Queue as Q
 
+class Node:
+	def __init__(self, node,dist):
+		self.node = node
+		self.dist = dist
+	def __cmp__(self, other):
+		return  self.dist - other.dist 
+	def __hash__(self):
+		return  self.node
+	def item(self):
+		return self.node, self.dist
+
 class Graph:
 	def __init__(self):
 		self.nodes = Set()
@@ -25,12 +36,12 @@ class Graph:
 				except :
 					self.G[headNode] = distD
 				self.nodes.add(node)
-		self.D = [100000] * (len(self.nodes)+1)
+		self.D = [float("inf")] * (len(self.nodes)+1)
 
 	def l(self,node1, node2):
 		return self.G[node1][node2]
 
-	def tails(self,node):
+	def heads(self,node):
 		try:
 			return self.G[node].keys()
 		except:
@@ -58,14 +69,14 @@ class Graph:
 
 	def pickNext(self,S):
 		node = 0
-		nodeKey = 1000000
+		nodeKey = float("inf")
 		for head in S:
-			for tail in  self.tails(head):
-				if tail not in S:
-					val = self.l(head,tail) + self.D[head]
+			for head in  self.heads(head):
+				if head not in S:
+					val = self.l(head,head) + self.D[head]
 					if val < nodeKey:
 						nodeKey = val
-						node = tail
+						node = head
 		self.D[node] = nodeKey
 		return node
 
@@ -73,10 +84,11 @@ class Graph:
 		try :
 			return self.D[n1] < self.D[n2]
 		except:
-			if n1 == 100000:
+			if n1 == float("inf"):
 				return False
 			else :
 				return True
+
 
 	def dijkstraH(self,node1,node2=-1): 
 		X = []
@@ -97,13 +109,14 @@ class Graph:
 				print H.l()
 				raise NameError("duplicate node in X")
 
-			for tail in self.tails(nextN): 
-				greedy = self.D[nextN] + self.l(nextN,tail)
-				if tail not in X and self.D[tail]  > greedy:
-					self.D[tail] = greedy
-					H.updateVal(H.find(tail), tail)
+			for head in self.heads(nextN): 
+				greedy = self.D[nextN] + self.l(nextN,head)
+				if head not in X and self.D[head]  > greedy:
+					self.D[head] = greedy
+					H.updateVal(H.find(head), head)
 			X.append(nextN)
 		return self.D
+
 
 	def dijkstraQ(self,node1,node2=-1): 
 		X = []
@@ -114,18 +127,16 @@ class Graph:
 
 		while not q.empty():
 			d,nextN =  q.get()
-
 			if nextN in X:
 				continue
-
 			if nextN == node2:
 				return d
-
-			for tail in self.tails(nextN): 
-				greedy = self.D[nextN] + self.l(nextN,tail)
-				if tail not in X and self.D[tail]  > greedy:
-					self.D[tail] = greedy
-					q.put((greedy,tail))
+			for head in self.heads(nextN): 
+				greedy = self.D[nextN] + self.l(nextN,head)
+				if head not in X and self.D[head]  > greedy:
+					self.D[head] = greedy
+					q.put((greedy,head))
+					#q.put(Node(head,greedy))
 			X.append(nextN)
 		return self.D
 
@@ -140,8 +151,8 @@ def testdigs():
 	start_time = time.time()
 	G.loadGFile(dFiles[0])
 	dist =  G.dijkstraQ(1)  #6878
-	tails = [1,2,3,4,5,6,7,8,9,10]
-	for t in tails:
+	heads = [1,2,3,4,5,6,7,8,9,10]
+	for t in heads:
 		r.append(dist[t])
 	assert r == [0, 104, 60, 84, 40, 150, 67, 61, 80, 116]
 
@@ -164,7 +175,7 @@ if __name__ == '__main__':
 	dFiles = ['dijkstraData.txt']
 
 	#PE5 values and results
-	tails = [7,37,59,82,99,115,133,165,188,197]
+	heads = [7,37,59,82,99,115,133,165,188,197]
 	ans  = [2599,2610,2947,2052,2367,2399,2029,2442,2505,3068]
 	r = []
 
@@ -177,7 +188,7 @@ if __name__ == '__main__':
 		start_time = time.time()
 		dist =  G.dijkstraQ(1)  #6878
 		print("--- %s seconds ---" % (time.time() - start_time))
-		for t in tails:
+		for t in heads:
 			r.append(dist[t])
 		assert r == ans
 
