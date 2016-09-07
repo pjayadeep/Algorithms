@@ -3,9 +3,6 @@ import heap
 # numbers equally into these heaps and pick either the min or max one
 # as the median:
 
-def maxCmp(n1,n2):
-	return n2 < n1
-
 class median:
 
 	def __init__(self,file):
@@ -16,6 +13,17 @@ class median:
 		self.medians = []
 
 	def placeNo(self,no):
+
+#		if self.minHeap.top() == float('inf') :
+#			self.minHeap.insert(no)
+#			print 'fxcx' , self.minHeap.top(), self.maxHeap.top(), no
+#			return
+#		if self.maxHeap.top() == float('inf') :
+#			self.maxHeap.insert(no)
+#			print 'fxcx' , self.minHeap.top(), self.maxHeap.top(), no
+#			return
+#			
+		
 		if no < self.minHeap.top():
 			self.minHeap.insert(no)
 		if no > self.maxHeap.top():
@@ -24,28 +32,41 @@ class median:
 			self.minHeap.insert(no)
 
 	def rebalance(self):
-		if self.minHeap.len() - self.maxHeap.len()  > 1:
+
+		if len(self.minHeap) - len(self.maxHeap)  > 1:
 			self.maxHeap.insert(self.minHeap.extractMin())
-		if self.maxHeap.len() - self.minHeap.len() > 1:
+		if len(self.maxHeap) - len(self.minHeap) > 1:
 			self.minHeap.insert(self.maxHeap.extractMin())
 		#print self.maxHeap.len(), self.minHeap.len()
+		#assert len(self.maxHeap) == len(self.minHeap)
 
 	def calcMedian(self):
+
 		for line in self.fd:
 			no = int(line)
 			self.placeNo(no)
 			self.rebalance()
 
-			if self.maxHeap.len() ==  self.minHeap.len():
+			if self.maxHeap.top() == float('inf'):
 				self.medians.append(self.minHeap.top())
-			elif self.maxHeap.len() > self.minHeap.len():
+				print 'ffffff', self.minHeap.top(), self.maxHeap.top()
+				continue
+			if self.minHeap.top() == float('inf'):
+				self.medians.append(self.maxHeap.top())
+				print 'sssssc', self.minHeap.top(), self.maxHeap.top()
+				continue
+
+			#print 'calc', self.minHeap.top(), self.maxHeap.top()
+			if len(self.maxHeap) > len(self.minHeap):
 				self.medians.append(self.maxHeap.top())
 			else:
 				self.medians.append(self.minHeap.top())
 		return self.medians
 
 if __name__ == '__main__':
-	med = median('med1.txt')
-	med = median('Median.txt')
-	print sum(med.calcMedian())%10000
-	#sum(self.medians), sum(self.medians) % 10000
+	#med = median('Median.txt')
+	med = median('_Median.txt')
+	#med = median('med1.txt')
+	tot=0
+	print sum(med.calcMedian()) % 10000
+	

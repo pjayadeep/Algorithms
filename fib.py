@@ -16,10 +16,21 @@ def fib2(n):
 		fib[i] = fib[i-1] + fib[i-2]
 	return fib[n]
 
+def fib3(n):
+	x,y = 0,1
+	for num in range(n):
+		x,y = y,x+y
+	return x
+
 if __name__ == '__main__':
+	val = 100
+
 	start_time = time.time()
-	print fib2(30)
+	print val , '! =',  fib3(val)
 	print("--- %s seconds ---" % (time.time() - start_time))
 	start_time = time.time()
-	print fib1(30)
+	print val , '! =',  fib2(val)
+	print("--- %s seconds ---" % (time.time() - start_time))
+	start_time = time.time()
+	print val , '! =',  fib1(val)
 	print("--- %s seconds ---" % (time.time() - start_time))

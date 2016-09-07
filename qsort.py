@@ -57,6 +57,20 @@ def pivotAtLast(arr,l,r):
 	arr[r],arr[l] = arr[l],arr[r]
 	return pivotAtFirst(arr,l,r)
 
+def meanPivot(arr,l,r):
+	size = r-l+1
+	if size%2 == 0:
+		m = size/2-1 + l
+	else:
+		m = size/2 + l
+
+	pp = {arr[l]:l, arr[m]:m, arr[r]:r}
+	median = pp[sorted(pp.keys())[1]]
+
+	arr[median], arr[l] = arr[l],arr[median]
+	return pivotAtFirst(arr,l,r)
+
+
 
 def _pivotAtLast(arr,l,r):
 #def partition(arr,l,r):
@@ -113,23 +127,7 @@ for i in range(1,12):
 
 
 #def partition(arr,l,r):
-def meanPivot(arr,l,r):
-
-	size = r-l+1
-
-	if size%2 == 0:
-		m = size//2-1
-	else:
-		m = size/2
-
-	pp = {arr[l]:l, arr[m]:m, arr[r]:r}
-	pidx = pp[sorted(pp.keys())[1]]
-	#print arr[l:r+1], arr[pidx]
-
-	arr[pidx], arr[l] = arr[l],arr[pidx]
-	return pivotAtFirst(arr,l,r)
-
-partition = meanPivot
+#partition = meanPivot
 def qsortTest():
 	assert _qsort([5,2],0,1) == [2,5]
 	return
@@ -161,80 +159,85 @@ def testmeanPivot():
 	meanPivot([5,2,3],0,2)
 	#meanPivot([5,2,3,1],0,0)
 
-Files = ["10.txt", "100.txt", "QuickSort.txt","IntegerArray.txt" ]
-Partitions = [pivotAtFirst, pivotAtLast, meanPivot,randomPivot]
-#Partitions = [randomPivot]
-for file in  Files:
-	for part in Partitions:
-		partition = part
-		print 'sorting ' + file + ' using ' + part.func_name
-		lines = [ int(x.strip())  for x in open(file, 'rU').readlines()]
-		print qsortCompare(lines,0,len(lines)-1) 
-		assert lines == range(1,len(lines)+1)
-		#print qsortCompare(lines,0,len(lines)-1) 
 
-exit()
+if __name__ == '__main__':
 
+	#Files = ["10.txt", "100.txt", "_QuickSort.txt","IntegerArray.txt" ]
+	Files = ['_QuickSort.txt',"10.txt", '100.txt']
+	Partitions = [pivotAtFirst, pivotAtLast, meanPivot,randomPivot]
+	#Partitions = [meanPivot]
+	for file in  Files:
+		print 'File=', file
+		for part in Partitions:
+			partition = part
+			lines = [ int(x.strip())  for x in open(file, 'rU').readlines()]
+			print 'sorting ' + file + ' using ' + part.func_name
+			print qsortCompare(lines,0,len(lines)-1) 
+			assert lines == range(1,len(lines)+1)
+			#print qsortCompare(lines,0,len(lines)-1) 
 
-testmeanPivot()
-qsortTest()
-#exit()
-print qsortCompare([3, 8, 2, 1, 4, 6, 7],0,6) 
-print qsortCompare([3, 8, 2, 1, 4, 6, 7],0,6) 
+	exit()
 
 
-assert _qsort([5,2],0,1) == [2,5]
-ar=[5,2]
-partition(ar,0,1) 
-print ar
+	testmeanPivot()
+	qsortTest()
+	#exit()
+	print qsortCompare([3, 8, 2, 1, 4, 6, 7],0,6) 
+	print qsortCompare([3, 8, 2, 1, 4, 6, 7],0,6) 
 
 
-qsortTest()
-
-a = [5,2]
-partition(a,0,1)
-print a
-
-assert qsortCompare([5,2],0,1) == 1
-assert qsortCompare([2,5],0,1) == 1
-ar=[5,2,3,1,4,0,11,8]
-partition(ar,0,7) 
-print ar
-
-partition(ar,0,7) 
-print ar
-
-#exit()
-print _qsort(ar,0,7)
-n1 = [ 4, 80, 70, 23, 9, 60, 68, 27, 66, 78, 12, 40, 52, 53, 44, 8, 49, 28, 18, 46, 21, 39, 51, 7, 87, 99, 69, 62, 84, 6, 79, 67, 14, 98, 83, 0, 96, 5, 82, 10, 26, 48, 3, 2, 15, 92, 11, 55, 63, 97, 43, 45, 81, 42, 95, 20, 25, 74, 24, 72, 91, 35, 86, 19, 75, 58, 71, 47, 76, 59, 64, 93, 17, 50, 56, 94, 90, 89, 32, 37, 34, 65, 1, 73, 41, 36, 57, 77, 30, 22, 13, 29, 38, 16, 88, 61, 31, 85, 33, 54 ]
-
-print 'sorting 100'
-print qsortCompare(n1,0,len(n1)-1) 
-assert n1 == range(0,100)
-print 'sorting sorted 100'
-print qsortCompare(n1,0,len(n1)-1) 
-assert n1 == range(0,100)
+	assert _qsort([5,2],0,1) == [2,5]
+	ar=[5,2]
+	partition(ar,0,1) 
+	print ar
 
 
-print 'sorting 10000 from file'
-lines = [ int(x.strip())  for x in open("QuickSort.txt", 'rU').readlines()]
-print qsortCompare(lines,0,len(lines)-1) 
-assert lines == range(1,10001)
-#print qsortCompare(lines,0,len(lines)-1) 
+	qsortTest()
 
-print "done.."
+	a = [5,2]
+	partition(a,0,1)
+	print a
 
-print 'sorting 100000 from file'
-lines = [ int(x.strip())  for x in open("IntegerArray.txt", 'rU').readlines()]
-print qsortCompare(lines,0,len(lines)-1) 
-assert lines == range(1,100001)
+	assert qsortCompare([5,2],0,1) == 1
+	assert qsortCompare([2,5],0,1) == 1
+	ar=[5,2,3,1,4,0,11,8]
+	partition(ar,0,7) 
+	print ar
 
-partition = randomPivot
-print 'sorting sorted 100000 with random pivot'
-print qsortCompare(lines,0,len(lines)-1) 
-assert lines == range(1,100001)
+	partition(ar,0,7) 
+	print ar
 
-#fd = open('output.txt','w')
-#for lst in srtd:
-#	fd.write(str(lst) + "\n")
-#fd.close()
+	#exit()
+	print _qsort(ar,0,7)
+	n1 = [ 4, 80, 70, 23, 9, 60, 68, 27, 66, 78, 12, 40, 52, 53, 44, 8, 49, 28, 18, 46, 21, 39, 51, 7, 87, 99, 69, 62, 84, 6, 79, 67, 14, 98, 83, 0, 96, 5, 82, 10, 26, 48, 3, 2, 15, 92, 11, 55, 63, 97, 43, 45, 81, 42, 95, 20, 25, 74, 24, 72, 91, 35, 86, 19, 75, 58, 71, 47, 76, 59, 64, 93, 17, 50, 56, 94, 90, 89, 32, 37, 34, 65, 1, 73, 41, 36, 57, 77, 30, 22, 13, 29, 38, 16, 88, 61, 31, 85, 33, 54 ]
+
+	print 'sorting 100'
+	print qsortCompare(n1,0,len(n1)-1) 
+	assert n1 == range(0,100)
+	print 'sorting sorted 100'
+	print qsortCompare(n1,0,len(n1)-1) 
+	assert n1 == range(0,100)
+
+
+	print 'sorting 10000 from file'
+	lines = [ int(x.strip())  for x in open("QuickSort.txt", 'rU').readlines()]
+	print qsortCompare(lines,0,len(lines)-1) 
+	assert lines == range(1,10001)
+	#print qsortCompare(lines,0,len(lines)-1) 
+
+	print "done.."
+
+	print 'sorting 100000 from file'
+	lines = [ int(x.strip())  for x in open("IntegerArray.txt", 'rU').readlines()]
+	print qsortCompare(lines,0,len(lines)-1) 
+	assert lines == range(1,100001)
+
+	partition = randomPivot
+	print 'sorting sorted 100000 with random pivot'
+	print qsortCompare(lines,0,len(lines)-1) 
+	assert lines == range(1,100001)
+
+	#fd = open('output.txt','w')
+	#for lst in srtd:
+	#	fd.write(str(lst) + "\n")
+	#fd.close()

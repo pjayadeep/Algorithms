@@ -1,10 +1,10 @@
 import sys 
 from sets import Set
-#import resource
+import resource
  
 #set rescursion limit and stack size limit
 sys.setrecursionlimit(10 ** 6)
-#resource.setrlimit(resource.RLIMIT_STACK, (2 ** 29, 2 ** 30))
+resource.setrlimit(resource.RLIMIT_STACK, (2 ** 29, 2 ** 30))
 
 # Read in the cyclic graph, reverse it!
 import time
@@ -82,8 +82,35 @@ the graph. Recursion hits the ceiling for Python, for large data,
 needs to up it and even the memory.
 """
 
+#def dfs_iter(G,B,g):
+def dfs(G,B,root):
+	count = 0
+	global Tm,TD
+
+	TD = []
+	stack = [root]
+	while True:
+		if stack == []:
+			break
+		node = stack.pop()
+		if B[node] == True:
+			continue
+		Tm += 1
+		TD.append(node)
+
+		count += 1
+		B[node] = True
+
+		try:
+			for n in G[node]:
+				stack.append(n) 
+		except KeyError:
+			pass
+	return count
+
 Tm = 0
-def dfs(G,B,g):
+TD = []
+def dfsX(G,B,g):
 	count = 1
 	global Tm,T
 	if B[g] == True:
@@ -101,21 +128,38 @@ def dfs(G,B,g):
 	T[Tm] = g
 	return count
 
-def dfs_loop(G,B,Nodes):
+def dfs_loopx(G,B,Nodes):
 	for node in Nodes:
 		if  not B[node] :
 			S.append(dfs(G,B,node))
 	return S
 
+def dfs_loop(G,B,Nodes):
+	global T,TD
+	T_nodes = []
+	for node in Nodes:
+		if  not B[node] :
+			S.append(dfs(G,B,node))
+			T_nodes += list(reversed(TD))
+	T = dict(enumerate(T_nodes,start=1))
+	return S
+
 #if __main__:
 
-dFiles = ['SCCs-1.txt', 'SCCs-2.txt', 'SCCs-3.txt', 'SCCs-4.txt', 'SCCs-5.txt', 'SCCs-6.txt','SCCs-7.txt', 'xx.txt']
-#dFiles = ['xx.txt',]
+dFiles = ['SCCs-1.txt', 'SCCs-2.txt', 'SCCs-3.txt', 'SCCs-4.txt', 'SCCs-5.txt', 'SCCs-6.txt','SCCs-7.txt', 'xx.txt', 'SCC.txt']
+#dFiles = ['SCC.txt']
+#dFiles = ['SCCs-2.txt']
+
+dFiles = ['SCCs-1.txt', 'SCCs-2.txt', 'SCCs-3.txt', 'SCCs-4.txt', 'SCCs-5.txt', 'SCCs-6.txt','SCCs-7.txt', 'xx.txt', 'SCC.txt']
+results = [[3, 3, 2],  [3, 3, 1,1], [7, 1] , [6, 3, 2, 1], [3, 3, 2],[30, 11, 11, 1, 1], [3, 3, 3],[5], [434821, 968, 459, 313, 211]]
+data_results = zip(dFiles,results)
+
 S = []
 T= {}
+
 def dictGraphTest():
 	global T, S,Tm
-	for file in dFiles:
+	for file,result in data_results:
 		print "Reading.. file:", file
 		start_time = time.time()
 		G,B = readG(file)
@@ -135,6 +179,8 @@ def dictGraphTest():
 		S = [] 
 		dfs_loop(G,B.copy(), T.values()[::-1])
 		print (file, sorted(S)[::-1][:5])
+		assert sorted(S)[::-1][:5] == result
+
 		print("--- %s seconds ---" % (time.time() - start_time))
 		print
 
@@ -174,5 +220,20 @@ def listGraphTest():
 		print("--- %s seconds ---" % (time.time() - start_time))
 		print(" Total %s seconds ---" % (time.time() - st))
 
+def dfs_tst():
+	for f in dFiles:
+		global T,Tm
+		G,B = readG(f)
+		print dfs_iter(G,B.copy(),6)
+		print T
+		print
+
+		T= {}
+		Tm = 0
+		T={}
+		print dfs(G,B.copy(),6)
+		print T
+		break
 dictGraphTest()
-#listGraphTest()
+exit()
+dfs_tst()

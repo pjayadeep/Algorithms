@@ -1,8 +1,10 @@
+from collections import defaultdict
 import time
 from sets import Set
 fd = open('algo1-programming_prob-2sum.txt', 'rU')
 #fd = open('med1.txt', 'rU')
 hashTable = {}
+#hashTable = defaultdict(int)
 bucketSize = 10**4
 tRange = 10000
 
@@ -21,6 +23,7 @@ print("--- %s seconds ---" % (time.time() - start_time))
 print "reading done, size = ", len(hashTable)
 
 start_time = time.time()
+ihash = hashTable
 for key1 in hashTable:
 	if key1 > 0: # sufficient to handle the -ve and 0 buckets.
 		continue

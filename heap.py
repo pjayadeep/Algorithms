@@ -1,12 +1,14 @@
 import random
 class heap:
 	def __init__(self,n):
-		self.inf = 100000
+		self.inf = float('inf')
 		self.N = [self.inf]*(n) # 2*i and 2*i + 1
 		self.D = [self.inf]*(n) # Dijkstra distane
 		self.size = n # size of the heap
 		self.nxt = 0 # next slot empty
 		self.cmpF = self.cmp
+	def __len__(self):
+		return self.nxt
 
 	def insert(self,val):
 		self.N[self.nxt] = val
@@ -41,7 +43,6 @@ class heap:
 		self.cmpF = cmpF
 
 	def bubbleUp(self, node):
-		#print "entry", self.N
 		pslot = (node-1)/2
 		parent = self.N[pslot]
 		cur = node
@@ -72,9 +73,15 @@ class heap:
 		self.nxt -= 1
 		self.bubbleDown()
 		self.N[self.nxt] = self.inf
+		self.size = self.size-1
 		return top
 
+	def top(self):
+		#assert self.N[0] != float('inf')
+		return self.N[0]
+
 	def empty(self):
+		return self.nxt == 0
 		if self.nxt == 0:
 			return True
 		else:
@@ -107,90 +114,91 @@ class heap:
 		return self.N[(node-1)/2]
 
 
-def heapTest():
-	x = [10, 4, 2, 9, 5, 8, 1, 7, 3, 6]
-	for i in range(1,100):
+if __name__ == '__main__':
+	def heapTest():
+		x = [10, 4, 2, 9, 5, 8, 1, 7, 3, 6]
+		for i in range(1,100):
+			random.shuffle(x)
+			h = heap(10)
+			for i in x:
+				h.insert(i)
+			assert h.left(10) == float('inf') 
+			assert h.right(10) == float('inf')
+			assert h.children(10) == (float('inf'),float('inf'))
+
+			r = []
+			for i in range(1,len(x)+1):
+				r.append( h.extractMin())
+			assert(r == sorted(x))
+
+		x = range(1,100)
+		hh = heap(len(x))
 		random.shuffle(x)
+		hh.heapify(x)
+		r = []
+		for i in range(1,len(x)+1):
+			r.append( hh.extractMin())
+		assert(r == sorted(x)) 
+
+
+		x = [8,9,10]
+		x = [5, 6, 2, 8, 3, 4, 10, 7, 9, 1]
 		h = heap(10)
-		for i in x:
-			h.insert(i)
-		assert h.left(10) == 100000 
-		assert h.right(10) == 100000
-		assert h.children(10) == (100000,100000)
+		h.heapify(x)
 
 		r = []
 		for i in range(1,len(x)+1):
 			r.append( h.extractMin())
 		assert(r == sorted(x))
-
-	x = range(1,100)
-	hh = heap(len(x))
-	random.shuffle(x)
-	hh.heapify(x)
-	r = []
-	for i in range(1,len(x)+1):
-		r.append( hh.extractMin())
-	assert(r == sorted(x)) 
+		print "OK"
 
 
-	x = [8,9,10]
-	x = [5, 6, 2, 8, 3, 4, 10, 7, 9, 1]
-	h = heap(10)
-	h.heapify(x)
+	def heapUTest():
+		x = [5, 6, 2, 8, 3, 4, 15, 7, 9, 1]
+		h = heap(10)
 
-	r = []
-	for i in range(1,len(x)+1):
-		r.append( h.extractMin())
-	assert(r == sorted(x))
-	print "OK"
+		for i in range(0,10):
+			for val in [100]:
+				h.heapify(x)
+				h.updateVal(i,val)
+				#print h.l()
+				r = []
+				for i in range(1,len(x)+1):
+					r.append( h.extractMin())
+				assert r[9] == val
+		print 'OK'
 
+	def heapIndexTest():
+		x = [5, 6, 2, 8, 3, 4, 10, 7, 9, 1]
+		h = heap(10)
+		h.heapify(x)
+		for val in range(1,11):
+			assert h.find(val) == h.l().index(val)
+		assert h.find(100) == -1
+		print 'OK'
 
-def heapUTest():
-	x = [5, 6, 2, 8, 3, 4, 15, 7, 9, 1]
-	h = heap(10)
+	def delTest():
+		x = [5, 6, 2, 8, 3, 4, 10, 7, 9, 1]
+		h = heap(10)
+		h.heapify(x)
+		h.delete(0)
+		assert h.find(0) == -1
+		print 'OK'
 
-	for i in range(0,10):
-		for val in [100]:
-			h.heapify(x)
-			h.updateVal(i,val)
-			#print h.l()
-			r = []
-			for i in range(1,len(x)+1):
-				r.append( h.extractMin())
-			assert r[9] == val
-	print 'OK'
+	def strTest():
+		x = ['xdas', 'adasdsa', 'bfefs']
+		h = heap(10)
+		h.heapify(x)
+		r = []
+		while not h.empty():
+			r.append( h.extractMin())
+		assert r == sorted(x)
+		print 'OK'
 
-def heapIndexTest():
-	x = [5, 6, 2, 8, 3, 4, 10, 7, 9, 1]
-	h = heap(10)
-	h.heapify(x)
-	for val in range(1,11):
-		assert h.find(val) == h.l().index(val)
-	assert h.find(100) == -1
-	print 'OK'
+	if __name__ == '__main__':
 
-def delTest():
-	x = [5, 6, 2, 8, 3, 4, 10, 7, 9, 1]
-	h = heap(10)
-	h.heapify(x)
-	h.delete(0)
-	assert h.find(0) == -1
-	print 'OK'
-
-def strTest():
-	x = ['xdas', 'adasdsa', 'bfefs']
-	h = heap(10)
-	h.heapify(x)
-	r = []
-	while not h.empty():
-		r.append( h.extractMin())
-	assert r == sorted(x)
-	print 'OK'
-
-if __name__ == '__main__':
-
-	heapTest()
-	heapUTest()
-	heapIndexTest()
-	delTest()
-	strTest()
+		heapTest()
+		heapUTest()
+		heapIndexTest()
+		delTest()
+		strTest()

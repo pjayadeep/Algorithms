@@ -51,8 +51,7 @@ def kerger_UF(Edges,n):
 			n -= 1
 
 	# Check for edges that cross the clusters, which are mincut edges
-	for e in Edges:
-		e1,e2 = e
+	for e1,e2 in Edges:
 		s1 = uf[e1]
 		s2 = uf[e2]
 		if s1 != s2:
